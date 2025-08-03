@@ -1,5 +1,5 @@
 /*
-20250803 1705 更新
+20250803 1710 更新
 
 ※ESP32-C3上のエラーがあるためアナログ入力としては使えない
 ESP32-C3 Series Datasheet Version 2.1 P.49より下記の記述あり
@@ -12,8 +12,8 @@ ADC2 of some chip revisions is not operable. For details, please refer to ESP32-
 #include <ESP32Servo.h> // by Kevin Harrington
 #include <Wire.h>
 
-#define onBordLED_PIN 2 // オンボードフルカラーLEDの使用端子
-#define onBordSW_PIN 3  // オンボードスイッチの使用端子
+#define onBordLED_PIN 21 // オンボードフルカラーLEDの使用端子
+#define onBordSW_PIN 0  // オンボードスイッチの使用端子
 // #define PWM1_PIN 4
 // #define PWM2_PIN 5
 // #define PWM3_PIN 8
@@ -21,10 +21,10 @@ ADC2 of some chip revisions is not operable. For details, please refer to ESP32-
 #define FREQUENCY 50
 #define RESOLUTION 12
 
-#define Analog1_PIN 0
-#define Analog2_PIN 1
-#define Analog3_PIN 9//4
-#define Analog4_PIN 18
+#define Analog1_PIN 1
+#define Analog2_PIN 2
+#define Analog3_PIN 3
+#define Analog4_PIN 4
 //ダメなピン 5,6,7,8,10,
 
 
