@@ -1,10 +1,11 @@
 /*
-20250802 1626 更新
+20250803 1705 更新
+
+※ESP32-C3上のエラーがあるためアナログ入力としては使えない
+ESP32-C3 Series Datasheet Version 2.1 P.49より下記の記述あり
+ADC2 of some chip revisions is not operable. For details, please refer to ESP32-C3 Series SoC Errata.
+訳：一部のチップリビジョンのADC2は動作しません。詳細はESP32-C3シリーズSoCのエラッタを参照してください。
 */
-    //※ESP32-C3上のエラーがあるためアナログ入力としては使えない
-    //ESP32-C3 Series Datasheet Version 2.1 P.49より下記の記述あり
-    //ADC2 of some chip revisions is not operable. For details, please refer to ESP32-C3 Series SoC Errata.
-    //訳：一部のチップリビジョンのADC2は動作しません。詳細はESP32-C3シリーズSoCのエラッタを参照してください。
 
 #include <M5Unified.h>
 #include <FastLED.h>
