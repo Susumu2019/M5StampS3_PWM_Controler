@@ -1,12 +1,6 @@
 /*
 20250803 1710 更新
-
-※ESP32-C3上のエラーがあるためアナログ入力としては使えない
-ESP32-C3 Series Datasheet Version 2.1 P.49より下記の記述あり
-ADC2 of some chip revisions is not operable. For details, please refer to ESP32-C3 Series SoC Errata.
-訳：一部のチップリビジョンのADC2は動作しません。詳細はESP32-C3シリーズSoCのエラッタを参照してください。
 */
-
 #include <M5Unified.h>
 #include <FastLED.h>
 #include <ESP32Servo.h> // by Kevin Harrington
@@ -27,9 +21,8 @@ ADC2 of some chip revisions is not operable. For details, please refer to ESP32-
 #define Analog4_PIN 4
 //ダメなピン 5,6,7,8,10,
 
-
 // WS2812テープLED関連
-#define WS2812_PIN 19    // WS2812 LEDテープ用の信号ピン
+#define WS2812_PIN 39    // WS2812 LEDテープ用の信号ピン
 #define WS2812_NUM 5    // テープのLED数
 CRGB tape_leds[WS2812_NUM];
 
@@ -94,9 +87,9 @@ void setServoAngle(int channel, int angle) {
 }
 
 void setup() {
+  USBSerial.begin(115200);
   auto cfg = M5.config();
   M5.begin(cfg);
-  Serial.begin(115200);
 
   //ピンモード設定
   pinMode(onBordSW_PIN, INPUT_PULLUP);//オンボードスイッチ
@@ -117,10 +110,6 @@ void setup() {
   timerAlarmWrite(publicTimer, 10000, true);
   timerAlarmEnable(publicTimer);
 
-  // LED初期点灯色
-  leds[0] = CRGB::White;
-  FastLED.show();
-
   // PWM設定
   ledcSetup(0, FREQUENCY, RESOLUTION);
   ledcSetup(1, FREQUENCY, RESOLUTION);
@@ -130,6 +119,15 @@ void setup() {
   // ledcAttachPin(PWM2_PIN, 2);
   // ledcAttachPin(PWM3_PIN, 3);
   // ledcAttachPin(PWM4_PIN, 4);
+
+  delay(2000);
+
+  // LED初期点灯色
+  leds[0] = CRGB::White;
+  FastLED.show();
+
+  delay(2000);
+  USBSerial.println("Start");
 }
 
 void loop() {
@@ -159,14 +157,64 @@ void loop() {
     }
   }
 
-  if(count_timer_500_one != 0){count_timer_500_one == 0;
-    Serial.printf("%04d,",analogRead(Analog1_PIN));
-    Serial.printf("%04d,",analogRead(Analog2_PIN));
-    Serial.printf("%04d,",analogRead(Analog3_PIN));
-    Serial.printf("%04d",analogRead(Analog4_PIN));
+  if(count_timer_500_one != 0){count_timer_500_one = 0;
+    USBSerial.printf("%04d,",analogRead(Analog1_PIN));
+    USBSerial.printf("%04d,",analogRead(Analog2_PIN));
+    USBSerial.printf("%04d,",analogRead(Analog3_PIN));
+    USBSerial.printf("%04d",analogRead(Analog4_PIN));
 
-    Serial.println();
+    USBSerial.println();
   }
 
   FastLED.show();
 }
+
+
+
+// /*
+//   M5StampS3 シリアル出力安定版
+//   2025-08-03 修正版
+// */
+
+// #include <M5Unified.h>
+// #include <FastLED.h>
+// #include <ESP32Servo.h>
+// #include <Wire.h>
+
+// #define PIN_onBordLED 21 // オンボードフルカラーLEDの使用端子
+// #define PIN_onBordSW 0 // オンボードスイッチの使用端子
+
+// //LED関連
+// const int num_leds = 1;
+// CRGB leds[num_leds];
+
+// void setup() {
+//   auto cfg = M5.config();
+//   M5.begin(cfg);
+//   USBSerial.begin(115200);
+
+//   pinMode(PIN_onBordSW, INPUT);
+
+//   //オンボードLED
+//   FastLED.addLeds<WS2812B, PIN_onBordLED, GRB>(leds, num_leds);
+
+//   //LED初期点灯色指定
+//   leds[0] = CRGB(255, 255, 255);   // （赤, 緑, 青）※3色それぞれの明るさを0-255で指定
+//   FastLED.show();
+
+// }
+
+// void loop() {
+//   M5.update();
+
+//   leds[0] = CRGB(100, 100, 0);   // （赤, 緑, 青）※3色それぞれの明るさを0-255で指定
+//   FastLED.show();
+
+//   //オンボードスイッチ処理
+//   if(digitalRead(PIN_onBordSW) == HIGH){
+//     USBSerial.printf("Test Hi\n");
+//   }else{
+//     USBSerial.printf("Test Lo\n");
+//   }
+
+// }
