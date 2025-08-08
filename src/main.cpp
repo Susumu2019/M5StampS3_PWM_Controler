@@ -81,11 +81,11 @@ int angleToDuty(int angle, int min_us, int max_us, int resolution, int freq) {
   float pulse_us = min_us + (max_us - min_us) * (angle / 180.0);
   return (int)((pulse_us / period_us) * duty_max);
 }
-void setServoAngle(int channel, int angle) {
+void setServoAngle(int channel, int angle) {//サーボに角度指定で制御
   int duty = angleToDuty(angle, servo_min_us, servo_max_us, RESOLUTION, FREQUENCY);
   ledcWrite(channel, duty);
 }
-int adcToDegree(int adcValue) {
+int adcToDegree(int adcValue) {//取得したアナログ値を角度に変換
   return map(adcValue, 0, 4095, 0, 180);
 }
 
@@ -101,6 +101,10 @@ void setup() {
   pinMode(Analog2_PIN, INPUT);//
   pinMode(Analog3_PIN, INPUT);//
   pinMode(Analog4_PIN, INPUT);//
+  pinMode(PWM1_PIN, OUTPUT);//
+  pinMode(PWM2_PIN, OUTPUT);//
+  pinMode(PWM3_PIN, OUTPUT);//
+  pinMode(PWM4_PIN, OUTPUT);//
 
   // オンボードLED設定
   FastLED.addLeds<WS2812B, onBordLED_PIN, GRB>(leds, num_leds);
@@ -114,26 +118,21 @@ void setup() {
   timerAlarmEnable(publicTimer);
 
   // PWM設定
-  //ledcSetup(1, FREQUENCY, RESOLUTION);
+  ledcSetup(1, FREQUENCY, RESOLUTION);
   ledcSetup(2, FREQUENCY, RESOLUTION);
-  //ledcSetup(3, FREQUENCY, RESOLUTION);
-  //ledcSetup(4, FREQUENCY, RESOLUTION);
-  //ledcAttachPin(PWM1_PIN, 1);//ピン番号とPWMチャンネルの割り当て
+  ledcSetup(3, FREQUENCY, RESOLUTION);
+  ledcSetup(4, FREQUENCY, RESOLUTION);
+  ledcAttachPin(PWM1_PIN, 1);//ピン番号とPWMチャンネルの割り当て
   ledcAttachPin(PWM2_PIN, 2);
-  //ledcAttachPin(PWM3_PIN, 3);
-  //ledcAttachPin(PWM4_PIN, 4);
+  ledcAttachPin(PWM3_PIN, 3);
+  ledcAttachPin(PWM4_PIN, 4);
 
-  //delay(2000);
+  // ledcDetachPin(PWM1_PIN);//念のため無効とする
+  // ledcDetachPin(PWM2_PIN);//念のため無効とする
+  // ledcDetachPin(PWM3_PIN);//念のため無効とする
+  // ledcDetachPin(PWM4_PIN);//念のため無効とする
 
   // LED初期点灯色
-  leds[0] = CRGB(255, 255, 255);//RGB CRGB::White;
-  // WS2812 テープを黄色点灯
-  for (int i = 0; i < WS2812_NUM; i++) {
-    tape_leds[i] = CRGB(255, 255, 255);//RGB
-  }
-  FastLED.show();
-  delay(1000);
-
   leds[0] = CRGB(0, 255, 0);//RGB CRGB::White;
   // WS2812 テープを黄色点灯
   for (int i = 0; i < WS2812_NUM; i++) {
@@ -150,10 +149,10 @@ void loop() {
   M5.update();
 
   if (digitalRead(onBordSW_PIN) == 1) {
-    //setServoAngle(1, adcToDegree(analogRead(Analog1_PIN)));
+    setServoAngle(1, adcToDegree(analogRead(Analog1_PIN)));
     setServoAngle(2, adcToDegree(analogRead(Analog2_PIN)));
-    //setServoAngle(3, adcToDegree(analogRead(Analog3_PIN)));
-    //setServoAngle(4, adcToDegree(analogRead(Analog4_PIN)));
+    setServoAngle(3, adcToDegree(analogRead(Analog3_PIN)));
+    setServoAngle(4, 180-adcToDegree(analogRead(Analog4_PIN)));//出力反転
 
     //setServoAngle(1, 90);
     //setServoAngle(2, 90);
